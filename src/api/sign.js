@@ -1,0 +1,1 @@
+import {ERR_OK} from './config'
