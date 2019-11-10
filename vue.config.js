@@ -11,6 +11,12 @@ module.exports = {
         pathRewrite: {
           '^/sign': ''    //代理的路径
         }
+      }, 
+      '/register': {
+        target: LinkAddress+'register',   //代理接口
+        pathRewrite: {
+          '^/register': ''    //代理的路径
+        }
       },    
     },
 

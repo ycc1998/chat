@@ -9,7 +9,11 @@ export default new VueRouter ({
   routes : [
     {
       path:"/",
-      component:Home
+      component:Home,
+      //是否需要登录
+      meta:{
+        login:true
+      }
     },
     {
       path:"/sign",
@@ -23,3 +27,5 @@ export default new VueRouter ({
     }
   ]
 })
+
+

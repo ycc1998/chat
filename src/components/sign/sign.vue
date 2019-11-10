@@ -5,13 +5,13 @@
 			<div>
 				<div class="input">
 					<span>用户名</span>
-					<input type="text" name="username" />
+					<input v-model="username" type="text" name="username" />
 				</div>
 				<div class="input">
 					<span>密码</span>
-					<input type="password" name="password" />
+					<input v-model="password" type="password" name="password" />
 				</div>
-				<div class="input">
+				<div @click="sign" class="input">
 					<button>立即登录</button>
 				</div>
 				<div>
@@ -23,12 +23,32 @@
 </template>
 
 <script type="text/ecmascript-6">
-import Vue from 'vue'
+import {user_sign} from '@/api/sign'
+
 	export default{
+		data(){
+			return {
+				username:'',
+				password:''
+			}
+		},
 		created(){
-			Vue.axios.post("/sign").then((response) => {
-			  console.log(response)
-			})
+			
+		},
+		methods:{
+			sign(){
+				if(this.username && this.password){
+					user_sign(this.username,this.password).then((res) => {
+	          if(res.data.code == 200){
+		          setTimeout(() =>{
+						    this.$router.push({
+						      path: `/`
+						    })
+							},300);		        	
+		      	}
+	        })
+				}
+			}			
 		}
 	}
 
@@ -71,6 +91,7 @@ import Vue from 'vue'
 				font-size: 14px
 			input
 				flex: 1
+				width:50px
 				outline: none
 				margin: 0 5px
 				border-radius: 0 30px 30px 0
