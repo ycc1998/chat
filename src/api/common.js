@@ -2,6 +2,8 @@ import axios from 'axios'
 import qs from 'qs';
 import {hasToken} from '../common/js/cache';
 import router from "@/router";
+
+
 export function post(url,params){
 	return axios.post(
 		url,
@@ -10,6 +12,17 @@ export function post(url,params){
 			return Promise.resolve(res);
 	})
 }
+
+
+export function get(url,params){
+	return axios.get(
+		url,
+		qs.stringify(params)
+		).then((res) =>{
+			return Promise.resolve(res);
+	})
+}
+
 
 //是否登录
 export function is_sign(){

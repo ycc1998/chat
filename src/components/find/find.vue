@@ -1,27 +1,30 @@
 <template>
-	<div class="home">
-				
+	<div class="find">
+		该功能正在努力完善中....
 	</div>
 </template>
 
 <script type="text/ecmascript-6">
 import * as socketApi  from '@/common/js/socket';
-
+import { mapMutations } from 'vuex'
 export default {
-
 	created(){
 		//初始化socket
 		socketApi.initWebSocket();
-		//this.socketApi.sendSock('{"class":"Index","action":"who"}',(res)=>{
-		//	console.log(res)
-		//});		
+		this.set_header_title('发现');
 	},
-	components:{
-		
+	methods:{
+		...mapMutations([
+			'set_header_title'
+		])
 	}
 }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
 
+	.find
+		padding-top: 48px
+		padding-bottom: 60px
+		text-align: center
 </style>

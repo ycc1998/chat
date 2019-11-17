@@ -47,13 +47,14 @@ axios.interceptors.response.use((res) => {
 		setToken(res.data.result.token);
 	}
 
-	Message({
-		showClose: true,
-    message: res.data.msg,
-    type: 'success',
-    duration: 2 * 1000
-  })
-
+	if (res.data.msg) {
+		Message({
+			showClose: true,
+	    message: res.data.msg,
+	    type: 'success',
+	    duration: 1 * 1000
+	  })
+	}
     return res;  
 }, function(err) {
 	if (err.response.data) {
@@ -65,7 +66,10 @@ axios.interceptors.response.use((res) => {
 	  })
 	  
 	  if (data.result.code == 999) {
-	  	removeToken()
+	  	removeToken();
+	  	router.push({
+	      path: `/sign`
+	    })
 	  }
 	}
   return Promise.resolve(err.response) 

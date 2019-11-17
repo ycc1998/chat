@@ -62,6 +62,7 @@ export default{
 		transform: translateX(-100%)
 		opacity: 1
 	.sign
+		background:$color-background
 		position: fixed
 		top: 0
 		left: 0
@@ -101,7 +102,7 @@ export default{
 				font-size: 18px
 				margin: 0 8px
 				background-color: $color-background
-				color:$color-text
+				color:red
 
 
 			

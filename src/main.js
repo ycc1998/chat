@@ -10,6 +10,9 @@ import prepose from './prepose';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
+import * as socketApi from './common/js/socket'
+Vue.prototype.socketApi = socketApi
+
 Vue.use(ElementUI);
 Vue.use(VueAxios, axios)
 

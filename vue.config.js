@@ -17,6 +17,12 @@ module.exports = {
         pathRewrite: {
           '^/register': ''    //代理的路径
         }
+      },
+      '/find_friend': {
+        target: LinkAddress+'find_friend',   //代理接口
+        pathRewrite: {
+          '^/find_friend': ''    //代理的路径
+        }
       },    
     },
 
