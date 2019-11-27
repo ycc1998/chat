@@ -1,9 +1,9 @@
-import {removeToken} from '@/common/js/cache';
+import {clear} from '@/common/js/cache';
 import {closeSocket} from '@/common/js/socket';
 import router from "@/router";
 
 function exit_sign(){
-	removeToken();
+	clear();
 	closeSocket();
 	router.push({
     path: `/sign`

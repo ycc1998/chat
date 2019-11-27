@@ -9,6 +9,8 @@ import Find from "@/components/find/find";
 import My from "@/components/my/my.vue";
 import Add from "@/components/add/add";
 import Detail from "@/components/detail/detail";
+import Information from '@/components/information/information'
+
 
 Vue.use(VueRouter);
   
@@ -21,7 +23,7 @@ export default new VueRouter ({
       meta:{
         login:true
       },
-      redirect: '/yan'
+      redirect: '/contacts'
     },
     {
       path:"/sign",
@@ -80,6 +82,14 @@ export default new VueRouter ({
         tab:false
       },
       component:Detail
+    },
+    {
+      path:"/information",  //好友详情
+      meta:{
+        login:true,
+        tab:false
+      },
+      component:Information
     },
   ]
 })

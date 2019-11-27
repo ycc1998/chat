@@ -46,12 +46,17 @@
       refreshDelay: {
         type: Number,
         default: 20
+      },
+      scrollToEndFlagValue:{
+        type:Boolean,
+        default:false
       }
     },
     mounted() {
       setTimeout(() => {
-        this._initScroll()
-      }, 20)
+        this._initScroll();
+        this.scrollToEndFlag();
+      }, 100)
     },
     methods: {
       _initScroll() {
@@ -128,6 +133,13 @@
       //滚动到指定的目标元素
       scrollToElement() {
         this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+      },
+      /* 封装方法：滚动到最底部 */
+      scrollToEndFlag () {
+        if ( this.scrollToEndFlagValue ) {
+          /* this.scroll: 为 better-scroll 的实例 */
+          this.scroll.scrollTo(0, this.scroll.maxScrollY)
+        }
       }
     },
     //watch的作用可以监控一个值的变换

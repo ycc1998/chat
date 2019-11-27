@@ -11,11 +11,11 @@
 				<span class="username">用户名：{{friend_info.username}}</span>
 			</div>			
 		</div>
-		<div v-if="!friend_info.is_friend" class="common icon">
+		<div @click='adds' v-if="!friend_info.is_friend" class="common icon">
 			<span class="iconfont">&#xe698;</span>
 			<span>添加为好友</span>
 		</div>
-		<div v-if="friend_info.is_friend" class="common icon">
+		<div @click="send" v-if="friend_info.is_friend" class="common icon">
 			<span class="iconfont">&#xe614;</span>
 			<span>发信息</span>
 		</div>
@@ -24,6 +24,7 @@
 
 <script type="text/ecmascript-6">
 import { mapGetters,mapMutations } from 'vuex'
+import {add} from '@/api/detail'
 
 export default{
 	created(){
@@ -33,8 +34,20 @@ export default{
 	},
 	methods:{
 		...mapMutations([
-			'set_friend_info'
+			'set_friend_info',
+			'set_information_info'
 		]),
+		send(){
+			this.set_information_info(this.friend_info)
+			this.$router.push({
+	      path: `/information`
+	    });
+		},
+		adds(){
+			add(this.friend_info.id,this.friend_info.username).then((res) =>{
+				console.log(res)
+			})
+		},
 		page(){
 			this.$router.go(-1);
 		},

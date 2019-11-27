@@ -2,7 +2,7 @@
 	<div class="header">
 		<h1>{{header_title}}</h1>
 		<router-link to="/add_friend">
-			<div class="iconfont">&#xe698;</div>
+			<div class="iconfont">&#xe698;<div :class="{'red':red==true}"></div></div>
 		</router-link>
 	</div>
 </template>
@@ -14,6 +14,7 @@ export default{
 	computed: {
     ...mapGetters([
       'header_title',
+      'red'
     ])
   }
 	
@@ -44,6 +45,13 @@ export default{
 			margin-right: 20px
 			font-size: 20px
 			font-weight: 700
-
-
+			.red
+				width: 10px
+				height: 10px
+				background: red
+				border: 50%
+				border-radius: 50%
+				position: relative
+				top: -40px
+				right: -13px
 </style>

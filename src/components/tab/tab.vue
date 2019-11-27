@@ -3,6 +3,7 @@
 		<router-link tag="div" class="item" to="/yan">
 			<div class="iconfont">&#xe614;</div>
 			<div class="text">Yan</div>
+			<div v-show="red2" class="red"></div>
 		</router-link>
 		<router-link tag="div" class="item" to="/contacts">
 			<div class="iconfont">&#xe722;</div>
@@ -20,7 +21,20 @@
 </template>
 
 <script type="text/ecmascript-6">
-
+import { mapGetters } from 'vuex'
+export default{
+	data(){
+		return {
+			'show':false
+		}
+	},
+	computed: {
+    ...mapGetters([
+      'red2',
+      'information_update'
+    ])
+  },
+}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -43,6 +57,13 @@
 			display: flex
 			flex-direction: column
 			align-items: center
+			.red
+				height: 10px
+				width: 10px
+				background: red
+				border-radius: 50%
+				position: absolute
+				left: 55px
 			.iconfont
 				font-size: 24px
 				width:24px

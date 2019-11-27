@@ -1,3 +1,9 @@
 export const is_show = state => state.is_show
 export const header_title = state => state.header_title
 export const friend_info = state => state.friend_info
+export const user_info = state => state.user_info
+export const red = state => state.red
+export const information_info = state => state.information_info
+export const information_update = state => state.information_update
+export const red2 = state => state.red2
+export const initialization = state => state.initialization

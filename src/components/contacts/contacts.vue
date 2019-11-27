@@ -1,15 +1,15 @@
 <template>
-	<Scroll :data="contacts_list" class="contacts">
+	<Scroll v-loading="loading" :data="contacts_list" class="contacts">
 		<div>
 			<Search></Search>
 			<ul class="content">
 				<li v-for="group in contacts_list" class="list-group" ref="listGroup">
 					<h2 class="title">{{group.title}}</h2>
 					<ul>
-						<li @touchstart="start(item.id)" @touchmove="move" :class="{click:item.id==index}" v-for="item in group.items"  class="list-group-item">
-	            <img class="avatar" src="http://downun.com/uploads/images/20191021/5a42d704722781bcf761d76009f8e069.jpg"  width="50" height="50" />
+						<li @click="firend_detail(item)" @touchstart="start(item.id)" @touchmove="move" :class="{click:item.id==index}" v-for="item in group.items"  class="list-group-item">
+	            <img class="avatar" :src="item.picture"  width="50" height="50" />
 	            <div class="name">
-	            	<span>{{item.name}}</span>
+	            	<span>{{item.nickname}}</span>
 	            </div>
 	          </li>
 					</ul>
@@ -26,31 +26,65 @@ import Scroll from '@/base/scroll/scroll'
 import axios from 'axios';
 import {ERR_OK} from '@/api/config'
 import singer from '@/common/js/singer'
-import { mapMutations } from 'vuex'
+import { mapMutations,mapGetters } from 'vuex'
+import {Message} from 'element-ui'
+import {set_friend_list,get_friend_list} from '@/common/js/cache'
+import {select} from '@/api/common'
 
 const HOT_SINGER_LEN = 10
 export default {
 	data(){
 		return {
 			contacts_list:[],
-			'index':-1
+			'index':-1,
+			loading:true,
+		}
+	},
+	watch:{
+		information_update(newName, oldName){
+	    setTimeout(()=>{
+	    	this._create();
+				this.$refs.scroll.refresh();
+	    },800);	    
 		}
 	},
 	created(){
-		//初始化socket
-		socketApi.initWebSocket();
-		this.set_header_title('通讯录');
-		axios.get('/data.json').then((res) => {
-			if (res.data.code === ERR_OK) {
-          this.contacts_list = this._normalizeSinger(res.data.result.list)
-          console.log(this.contacts_list)
-        }
-		});
+		this._create();
 	},
 	methods:{
 		...mapMutations([
-			'set_header_title'
+			'set_header_title',
+			'set_friend_info',
+			'set_initialization',
+			'information_update'
 		]),
+		_create(){
+			//初始化socket
+			socketApi.initWebSocket();
+			this.set_header_title('通讯录');
+			let list  = get_friend_list();
+			
+			if (list.length <= 0) {
+				this.loading = true;
+				axios.get('/friend_list').then((res) => {
+					if (res.data.code === ERR_OK) {
+		        this.contacts_list = this._normalizeSinger(res.data.result)
+		        this.loading = false;
+		        set_friend_list(this.contacts_list);
+		      }
+				});
+			}else{
+				this.contacts_list = list;
+				this.loading = false;
+			}
+		},
+		firend_detail(item){
+			item.is_friend = true;
+			this.set_friend_info(item);
+	    this.$router.push({
+	      path: `/detail`
+	    });
+		},
 		start(index){
 			this.index = index
 		},
@@ -60,21 +94,10 @@ export default {
 			}
 		},
     _normalizeSinger(list){
-    	let map = {
-        hot: {
-          title: '',
-          items: []
-        }
-      };
+    	let map = {};
 
       //循环数组 先push热门数据，在判断map中是否有key 
       list.forEach((item, index) => {
-      	if(index < HOT_SINGER_LEN){
-      		map.hot.items.push(new singer({
-            name: item.Fsinger_name,
-            id: item.Fsinger_mid
-          }))
-      	}
 
       	const key = item.Findex
       	if(!map[key]){
@@ -94,10 +117,7 @@ export default {
       	}      	
 
       	//new singer 返回处理好的数据
-      	map[key].items.push(new singer({
-          name: item.Fsinger_name,
-          id: item.Fsinger_mid
-        }));
+      	map[key].items.push(item);
 
       });
 
@@ -123,6 +143,11 @@ export default {
         return hot.concat(ret,te);
     },
 	},
+	computed: {
+    ...mapGetters([
+      'initialization',
+    ])
+  },
 	components:{
 		Search,
 		Scroll

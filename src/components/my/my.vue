@@ -1,10 +1,10 @@
 <template>
 	<div class="my">
 		<div class="user_info common">
-			<img src="http://downun.com/uploads/images/20191021/5a42d704722781bcf761d76009f8e069.jpg"  width="60" height="60" />
+			<img :src="user_info.picture"  width="60" height="60" />
 			<div class="name">
-				<span class="nickname">昵称</span>
-				<span class="username">用户名：ruochen-2014</span>
+				<span class="nickname">{{user_info.nickname}}</span>
+				<span class="username">用户名：{{user_info.username}}</span>
 			</div>
 			<div class="right">
 				<span class="iconfont">&#xe630;</span>
@@ -12,7 +12,7 @@
 			</div>
 		</div>
 
-		<div @touchstart="start(1)" @touchmove="move" :class="{click:1==index}" class="item common">
+		<div @click="clear" @touchstart="start(1)" @touchmove="move" :class="{click:1==index}" class="item common">
 			<span class="iconfont">&#xe946;</span>
 			<span class="text">清空聊天记录</span>
 			<span class="iconfont">&#xe62d;</span>
@@ -51,24 +51,50 @@ import * as socketApi  from '@/common/js/socket';
 import { mapMutations } from 'vuex'
 import {Message} from 'element-ui'
 import {exit_sign} from './my.js'
+import { getUserInfo } from '@/common/js/cache';
+import storage from 'good-storage'
 
 export default {
 	data(){
 		return {
 			'show_exit':false,
-			'index':0
+			'index':0,
+			'user_info':[]
 		}
 	},
 	created(){
 		//初始化socket
-		console.log(1)
 		socketApi.initWebSocket();
 		this.set_header_title('我的');
+		this.user_info = getUserInfo();
 	},
 	methods:{
 		...mapMutations([
 			'set_header_title'
 		]),
+		clear(){
+			if (this.index != 0) {
+				this.index = 0
+			}
+      this.$confirm('此操作将永久删除所有记录！, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+      	let all = storage.getAll();
+      	for(var key in all){
+					if (!isNaN(key)) {
+						storage.remove(key);
+					}
+				}
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(()=>{
+
+      });     
+		},
 		exit(){
 			this.show_exit = true
 		},

@@ -24,7 +24,9 @@
 
 <script type="text/ecmascript-6">
 import {user_sign} from '@/api/sign'
-import {getToken} from '@/common/js/cache';
+import {getToken,setUserInfo} from '@/common/js/cache';
+import { mapMutations } from 'vuex'
+
 	export default{
 		data(){
 			return {
@@ -39,6 +41,9 @@ import {getToken} from '@/common/js/cache';
 			}
 		},
 		methods:{
+			...mapMutations([
+	      'set_information_update'
+	    ]),
 			sign(){
 				var username = this.username;
 				var password = this.password;
@@ -49,11 +54,13 @@ import {getToken} from '@/common/js/cache';
 					user_sign(username,password).then((res) => {
 						this.submit = true;
 	          if(res.data.code == 200){
+	          	setUserInfo(res.data.result.data);
 		          setTimeout(() =>{
 						    this.$router.push({
 						      path: `/`
 						    })
-							},300);		        	
+						  this.set_information_update(Date.parse(new Date()));
+							},180);		        	
 		      	}
 	        })
 

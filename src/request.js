@@ -1,7 +1,7 @@
 // 引入依赖包
 import axios from 'axios'
 import Vue from "vue";
-import {setToken,getToken,removeToken} from './common/js/cache'
+import {setToken,getToken,removeToken,clear} from './common/js/cache'
 import {Message} from 'element-ui'
 import router from "@/router";
 
@@ -66,7 +66,7 @@ axios.interceptors.response.use((res) => {
 	  })
 	  
 	  if (data.result.code == 999) {
-	  	removeToken();
+	  	clear();
 	  	router.push({
 	      path: `/sign`
 	    })

@@ -1,7 +1,7 @@
 import router from "@/router";
 import {SOCKET_URL} from "@/api/config";
-import {setToken,getToken,removeToken} from '@/common/js/cache';
-
+import {setToken,getToken,removeToken,set_friend_request,del_friend_list,exp_clear,friend_send_news} from '@/common/js/cache';
+import store from '@/store/index.js'
 import {Message} from 'element-ui'
 
 var websock = null
@@ -84,7 +84,15 @@ function websocketonmessage (e) {
   }else{
     param = data;
   }
+  console.log(param)
+  //更新token
+  if (param.result.token) {
+    console.log('更新额')
+    setToken(param.result.token);
+  }
+
   if (param.result.code == 999 || param.result.code == 4000) {
+    //token验证失败 账号在另一处登录
     console.log(param.result)
     Message({
       message: param.msg,
@@ -99,11 +107,18 @@ function websocketonmessage (e) {
     websock.close();
     websock = null;
     websocketClearPing(timePing);
-  }else if(param.result.token){
-    console.log('更新额')
-    setToken(param.result.token);
+  }else if(param.result.code == 2048){
+    //好友添加请求
+    set_friend_request(param.result.data);
+    store.commit('set_red', true)
+  }else if(param.result.code == 3333){
+    //刷新好友列表
+    del_friend_list();
+  }else if(param.result.code == 1024){
+    //处理好友发送的消息
+    friend_send_news(param.result);
   }else{
-    globalCallback(param);
+    //globalCallback(param);
   }
   
 
@@ -122,21 +137,30 @@ function websocketsend (agentData) {
 // 关闭
 function websocketclose (e) {
   console.log('关闭了')
+  store.commit('set_initialization', true)
+  exp_clear();//清除好友请求 缓存
   websocketClearPing(timePing);
 }
  
 // 创建 websocket 连接
 function websocketOpen (e) {
   console.log('连接成功')
-  websocketPing();
+  setTimeout(()=>{
+    websocketPing();
+  },30*1000);
+  
 }
 
 //定时发送心跳包
 function websocketPing(){
 	timePing = setInterval(function(){
 		//定时发送ping
-		websocketsend('PING');
+    var data = {
+      'token':getToken()
+    };
+		websocketsend(data);
 	},30*1000);
+
 }
 
 //取消发送心跳包 data 定时器名称
@@ -144,7 +168,7 @@ function websocketClearPing(data){
 	clearInterval(data);
 }
 
-//关闭连接
+//主动关闭连接
 function closeSocket(){
   if (websock) {
     websock.close();
@@ -152,14 +176,34 @@ function closeSocket(){
     websocketClearPing(timePing);
   }
 }
+
+
+//判断socket是否正常
+ function is_normal(){
+  if (websock) {
+    if (websock.readyState == 1) {
+      return true;
+    }else{
+      closeSocket();
+      return false;
+    }
+  }else{
+    return false;
+  }
+}
  
 
  
 // 将方法暴露出去
-export {sendSock,initWebSocket,closeSocket}
+export {sendSock,initWebSocket,closeSocket,is_normal}
 
 
 /*
 999 token验证失败或过期
 4000  账户在别处登录
+3333 需要刷新好友列表
+1024 好友发送的消息
 */
+
+
+
